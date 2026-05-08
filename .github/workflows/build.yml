@@ -49,17 +49,19 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
+        shell: bash
         run: |
+          set -o pipefail
           echo ">>> Starting debug build..."
-          ./gradlew assembleDebug --stacktrace --info 2>&1 | tee build-log.txt
-          echo ">>> Build exit code: $?"
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee build-log.txt
 
       - name: Build Release APK
         if: success()
+        shell: bash
         run: |
+          set -o pipefail
           echo ">>> Starting release build..."
           ./gradlew assembleRelease --stacktrace 2>&1 | tee -a build-log.txt
-          echo ">>> Build exit code: $?"
 
       - name: List APK outputs
         if: always()

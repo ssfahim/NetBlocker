@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.netblocker.utils.BlocklistManager;
 import com.netblocker.utils.FirewallEngine;
 import com.netblocker.utils.NetworkUtils;
@@ -60,7 +60,7 @@ public class AppDetailActivity extends AppCompatActivity {
         TextView typeView = findViewById(R.id.detail_app_type);
         TextView dataView = findViewById(R.id.detail_data_usage);
         TextView strategyView = findViewById(R.id.detail_strategy);
-        MaterialSwitch blockSwitch = findViewById(R.id.detail_block_switch);
+        SwitchMaterial blockSwitch = findViewById(R.id.detail_block_switch);
         Button openSettingsBtn = findViewById(R.id.btn_open_settings);
         Button openDataSaverBtn = findViewById(R.id.btn_open_data_saver);
 

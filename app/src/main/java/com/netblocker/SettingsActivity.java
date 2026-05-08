@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.netblocker.utils.BlocklistManager;
 import com.netblocker.utils.FirewallEngine;
 
@@ -33,10 +33,10 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // Switches
-        MaterialSwitch switchWifi = findViewById(R.id.switch_block_wifi);
-        MaterialSwitch switchMobile = findViewById(R.id.switch_block_mobile);
-        MaterialSwitch switchNotify = findViewById(R.id.switch_notifications);
-        MaterialSwitch switchSystem = findViewById(R.id.switch_show_system);
+        SwitchMaterial switchWifi = findViewById(R.id.switch_block_wifi);
+        SwitchMaterial switchMobile = findViewById(R.id.switch_block_mobile);
+        SwitchMaterial switchNotify = findViewById(R.id.switch_notifications);
+        SwitchMaterial switchSystem = findViewById(R.id.switch_show_system);
 
         TextView strategyInfo = findViewById(R.id.strategy_info);
         TextView rootStatus = findViewById(R.id.root_status);

@@ -99,7 +99,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_block_wifi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -133,7 +133,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_block_mobile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -183,7 +183,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_notifications"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -217,7 +217,7 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_show_system"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

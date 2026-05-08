@@ -80,7 +80,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.materialswitch.MaterialSwitch
+                    <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/detail_block_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.netblocker.R;
 import com.netblocker.models.AppInfo;
 import com.netblocker.utils.NetworkUtils;
@@ -129,7 +129,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.ViewHold
         TextView packageName;
         TextView dataUsage;
         TextView systemBadge;
-        MaterialSwitch blockToggle;
+        SwitchMaterial blockToggle;
         View blockedIndicator;
 
         ViewHolder(View itemView) {
