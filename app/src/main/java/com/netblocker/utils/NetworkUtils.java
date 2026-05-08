@@ -7,22 +7,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.os.RemoteException;
+import android.util.Log;
 
 import java.util.Calendar;
 
-/**
- * Utility class for network-related operations.
- */
 public class NetworkUtils {
 
-    /**
-     * Checks if the device currently has internet connectivity.
-     */
+    private static final String TAG = "NetworkUtils";
+
     public static boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             android.net.Network network = cm.getActiveNetwork();
             if (network == null) return false;
@@ -37,14 +33,10 @@ public class NetworkUtils {
         }
     }
 
-    /**
-     * Checks if the current connection is Wi-Fi.
-     */
     public static boolean isOnWifi(Context context) {
         ConnectivityManager cm = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             android.net.Network network = cm.getActiveNetwork();
             if (network == null) return false;
@@ -54,14 +46,10 @@ public class NetworkUtils {
         return false;
     }
 
-    /**
-     * Checks if the current connection is mobile data.
-     */
     public static boolean isOnMobileData(Context context) {
         ConnectivityManager cm = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             android.net.Network network = cm.getActiveNetwork();
             if (network == null) return false;
@@ -71,10 +59,6 @@ public class NetworkUtils {
         return false;
     }
 
-    /**
-     * Returns data usage for a specific UID in the last 30 days.
-     * Requires PACKAGE_USAGE_STATS permission.
-     */
     public static long getDataUsageForUid(Context context, int uid) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return 0;
 
@@ -89,30 +73,37 @@ public class NetworkUtils {
 
         long totalBytes = 0;
 
+        // Wi-Fi usage
         try {
-            // Wi-Fi usage
-            NetworkStats.Bucket bucket = statsManager.queryDetailsForUid(
+            NetworkStats stats = statsManager.queryDetailsForUid(
                     ConnectivityManager.TYPE_WIFI, null, startTime, endTime, uid);
-            if (bucket != null) {
+            NetworkStats.Bucket bucket = new NetworkStats.Bucket();
+            while (stats.hasNextBucket()) {
+                stats.getNextBucket(bucket);
                 totalBytes += bucket.getRxBytes() + bucket.getTxBytes();
             }
-        } catch (RemoteException | SecurityException ignored) {}
+            stats.close();
+        } catch (RemoteException | SecurityException e) {
+            Log.w(TAG, "Failed to get WiFi data usage for uid " + uid, e);
+        }
 
+        // Mobile data usage
         try {
-            // Mobile data usage
-            NetworkStats.Bucket bucket = statsManager.queryDetailsForUid(
+            NetworkStats stats = statsManager.queryDetailsForUid(
                     ConnectivityManager.TYPE_MOBILE, null, startTime, endTime, uid);
-            if (bucket != null) {
+            NetworkStats.Bucket bucket = new NetworkStats.Bucket();
+            while (stats.hasNextBucket()) {
+                stats.getNextBucket(bucket);
                 totalBytes += bucket.getRxBytes() + bucket.getTxBytes();
             }
-        } catch (RemoteException | SecurityException ignored) {}
+            stats.close();
+        } catch (RemoteException | SecurityException e) {
+            Log.w(TAG, "Failed to get mobile data usage for uid " + uid, e);
+        }
 
         return totalBytes;
     }
 
-    /**
-     * Format bytes into a human-readable string.
-     */
     public static String formatBytes(long bytes) {
         if (bytes < 1024) return bytes + " B";
         if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
