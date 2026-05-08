@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NetBlocker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryDark">@color/background</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="toolbarStyle">@style/NetBlockerToolbar</item>
+    </style>
+
+    <style name="NetBlockerToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="titleTextColor">@color/text_primary</item>
+        <item name="android:background">@color/surface</item>
+    </style>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Access to Documents/NetBlocker/ for sharing log files -->
+    <external-path
+        name="documents"
+        path="Documents/NetBlocker/" />
+
+    <!-- Fallback: app-specific external storage -->
+    <external-files-path
+        name="external_files"
+        path="." />
+</paths>

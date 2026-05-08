@@ -1,0 +1,85 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # allows manual trigger from GitHub UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Gradle wrapper (if jar missing)
+        run: |
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Generating Gradle wrapper..."
+            gradle wrapper --gradle-version 8.2
+          fi
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace 2>&1 | tee build-log.txt
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace 2>&1 | tee -a build-log.txt
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: NetBlocker-debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: NetBlocker-release
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+      - name: Upload build log (always)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-log
+          path: build-log.txt
+          retention-days: 7
+
+      - name: Upload full Gradle reports on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: gradle-reports
+          path: |
+            app/build/reports/
+            app/build/outputs/logs/
+          retention-days: 7
