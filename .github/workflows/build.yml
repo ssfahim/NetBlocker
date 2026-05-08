@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,34 +21,54 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Generate Gradle wrapper (if jar missing)
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Install required SDK components
+        run: |
+          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Generate Gradle wrapper
         run: |
           if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Generating Gradle wrapper..."
-            gradle wrapper --gradle-version 8.2
+            echo ">>> Generating Gradle wrapper jar..."
+            gradle wrapper --gradle-version 8.2 --no-daemon
+            echo ">>> Wrapper generated"
+            ls -la gradle/wrapper/
+          else
+            echo ">>> Wrapper jar already exists"
           fi
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace 2>&1 | tee build-log.txt
+        run: |
+          echo ">>> Starting debug build..."
+          ./gradlew assembleDebug --stacktrace --info 2>&1 | tee build-log.txt
+          echo ">>> Build exit code: $?"
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace 2>&1 | tee -a build-log.txt
+        if: success()
+        run: |
+          echo ">>> Starting release build..."
+          ./gradlew assembleRelease --stacktrace 2>&1 | tee -a build-log.txt
+          echo ">>> Build exit code: $?"
+
+      - name: List APK outputs
+        if: always()
+        run: |
+          echo ">>> Searching for APK files..."
+          find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+          echo ""
+          echo ">>> Build outputs directory:"
+          ls -laR app/build/outputs/ 2>/dev/null || echo "No build outputs directory"
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
@@ -57,6 +77,7 @@ jobs:
           name: NetBlocker-debug
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
@@ -65,8 +86,9 @@ jobs:
           name: NetBlocker-release
           path: app/build/outputs/apk/release/*.apk
           retention-days: 30
+          if-no-files-found: warn
 
-      - name: Upload build log (always)
+      - name: Upload build log
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -74,7 +96,7 @@ jobs:
           path: build-log.txt
           retention-days: 7
 
-      - name: Upload full Gradle reports on failure
+      - name: Upload Gradle reports on failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -82,4 +104,6 @@ jobs:
           path: |
             app/build/reports/
             app/build/outputs/logs/
+            build-log.txt
           retention-days: 7
+          if-no-files-found: ignore
