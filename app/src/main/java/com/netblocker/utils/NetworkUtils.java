@@ -6,7 +6,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Build;
-import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -83,7 +82,7 @@ public class NetworkUtils {
                 totalBytes += bucket.getRxBytes() + bucket.getTxBytes();
             }
             stats.close();
-        } catch (RemoteException | SecurityException e) {
+        } catch (Exception e) {
             Log.w(TAG, "Failed to get WiFi data usage for uid " + uid, e);
         }
 
@@ -97,7 +96,7 @@ public class NetworkUtils {
                 totalBytes += bucket.getRxBytes() + bucket.getTxBytes();
             }
             stats.close();
-        } catch (RemoteException | SecurityException e) {
+        } catch (Exception e) {
             Log.w(TAG, "Failed to get mobile data usage for uid " + uid, e);
         }
 
